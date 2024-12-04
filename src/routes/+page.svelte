@@ -12,21 +12,6 @@
 		});
 	});
 
-	let formData = {
-		name: '',
-		email: ''
-	};
-
-	function handleSubmit() {
-		// Basic validation
-		if (formData.name && formData.email) {
-			alert('ลงทะเบียนสำเร็จ!');
-		} else {
-			alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-		}
-	}
-
-	//400x566px
 	const upcomingEvents = [
 		{
 			title: 'BNK48 Janken Tournament 2020',
@@ -216,48 +201,6 @@
 						</p>
 					</div>
 				{/each}
-			</div>
-		</div>
-	</section>
-
-	<!-- Registration Section -->
-	<section id="register" class="bg-gray-100 py-16">
-		<div class="container mx-auto px-6">
-			<div class="mx-auto max-w-xl rounded-xl bg-white p-8 shadow-lg" data-aos="fade-up">
-				<h2 class="mb-6 text-center text-3xl font-bold text-[#9f1c37]">สมัครเข้าร่วมกิจกรรม</h2>
-				<form on:submit|preventDefault={handleSubmit} class="space-y-4">
-					<div>
-						<label for="name" class="mb-2 block text-sm font-medium text-gray-700"> ชื่อ </label>
-						<input
-							type="text"
-							id="name"
-							bind:value={formData.name}
-							required
-							class="w-full rounded-md border border-gray-300 px-4 py-2
-							focus:outline-none focus:ring-2 focus:ring-[#9f1c37]"
-							placeholder="กรอกชื่อของคุณ"
-						/>
-					</div>
-					<div>
-						<label for="email" class="mb-2 block text-sm font-medium text-gray-700"> อีเมล </label>
-						<input
-							type="email"
-							id="email"
-							bind:value={formData.email}
-							required
-							class="w-full rounded-md border border-gray-300 px-4 py-2
-							focus:outline-none focus:ring-2 focus:ring-[#9f1c37]"
-							placeholder="กรอกอีเมลของคุณ"
-						/>
-					</div>
-					<button
-						type="submit"
-						class="w-full rounded-md bg-[#9f1c37] py-3 text-white
-						transition duration-300 ease-in-out hover:bg-red-700"
-					>
-						ลงทะเบียน
-					</button>
-				</form>
 			</div>
 		</div>
 	</section>
