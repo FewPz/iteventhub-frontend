@@ -5,7 +5,11 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 
 	theme: {
-		extend: {}
+		extend: {
+			colors: {
+				primary: '#9f1c37'
+			}
+		}
 	},
 
 	plugins: [typography]
