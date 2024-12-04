@@ -1,147 +1,165 @@
-<script>
-	// @ts-nocheck
-
+<script lang="ts">
 	import { projectBase4 } from '../../store/venue';
-
-	// @ts-ignore
-	/**
-	 * @type {{ zones: any; stage: any; name?: string; }}
-	 */
-	let venue;
-	// @ts-ignore
-	/**
-	 * @type {{ name: any; rows: any; id: any; } | null}
-	 */
-	let selectedZone = null;
-	// @ts-ignore
-	/**
-	 * @type {any[]}
-	 */
-	let selectedSeats = [];
-
-	// Subscribe to store
-	projectBase4.subscribe((value) => {
-		venue = value;
+	import { fade, scale } from 'svelte/transition';
+	import type { Zone, Seat, Venue } from '../../store/venueTypes';
+	
+	let venue: Venue;
+	let selectedZone: Zone | null = null;
+	let selectedSeats: Array<{seatId: string, zoneId: string}> = [];
+	
+	projectBase4.subscribe((value: Venue) => {
+	  venue = value;
 	});
-
-	// Toggle seat selection
-	// @ts-ignore
-	function selectSeat(seatId, zoneId) {
-		// @ts-ignore
-		const index = selectedSeats.findIndex((s) => s.seatId === seatId);
-		if (index === -1) {
-			// @ts-ignore
-			selectedSeats = [...selectedSeats, { seatId, zoneId }];
-		} else {
-			// @ts-ignore
-			selectedSeats = selectedSeats.filter((s) => s.seatId !== seatId);
-		}
+	
+	function selectSeat(seatId: string, zoneId: string): void {
+	  const index = selectedSeats.findIndex((s) => s.seatId === seatId);
+	  selectedSeats = index === -1 
+		? [...selectedSeats, { seatId, zoneId }]
+		: selectedSeats.filter((s) => s.seatId !== seatId);
 	}
-
-	// Calculate total price
-	function getTotalPrice() {
-		// @ts-ignore
-		return selectedSeats.reduce((total, seat) => {
-			// @ts-ignore
-			const zone = venue.zones.find((z) => z.id === seat.zoneId);
-			return total + (zone ? zone.price : 0);
-		}, 0);
-	}
-
+	
+	type SeatStatus = 'empty' | 'occupied' | 'selected' | 'available';
+	
+	const getTotalPrice = (): number => selectedSeats.reduce((total, seat) => {
+	  const zone = venue?.zones.find((z) => z.id === seat.zoneId);
+	  return total + (0);
+	}, 0);
+	
 	$: totalPrice = getTotalPrice();
-</script>
-
-<div class="mx-auto w-full max-w-4xl p-4">
-	<!-- Stage -->
-	<div class="text-center font-bold text-3xl mb-4">
-		Project Based 4
-	</div>
-	<div
-		class="relative mx-auto flex items-center justify-center rounded-full font-bold text-white"
-		style="
-			left: {venue.stage.position.x};
-			top: {venue.stage.position.y};
-			width: {venue.stage.position.width};
-			height: {venue.stage.position.height};
-			transform: translateX(-50%);
-			background: linear-gradient(to right, {venue.stage.style.gradient.join(', ')});
-		">
-		STAGE
-	</div>
-
-	<!-- Zones -->
-	<div class="relative h-96 w-full overflow-hidden rounded-3xl">
-		{#each venue.zones as zone}
-			<button
-				class="absolute flex items-center justify-center font-medium text-white transition-opacity hover:opacity-80"
-				style="
-						left: {zone.position.x};
-						top: {zone.position.y};
-						width: {zone.position.width};
-						height: {zone.position.height};
-						background-color: {zone.color};
-						transform: translateX(-50%);
-				"
-				on:click={() => (selectedZone = selectedZone === zone ? null : zone)}
+	
+	const getSeatStatus = (seat: Seat | null, zoneId: string): SeatStatus => {
+	  if (!seat) return 'empty';
+	  if (seat.status === 'occupied') return 'occupied';
+	  return selectedSeats.some((s) => s.seatId === seat.id) ? 'selected' : 'available';
+	};
+	
+	$: selectedSeatsCount = selectedSeats.length;
+	$: isPaymentDisabled = selectedSeatsCount === 0;
+	
+	type StyleProps = {
+	  x: string;
+	  y?: string;
+	  width: string;
+	  height: string;
+	};
+	
+	const getPositionStyle = ({ x, y, width, height }: StyleProps): string => `
+	  left: ${x};
+	  ${y ? `top: ${y};` : ''}
+	  width: ${width};
+	  height: ${height};
+	  transform: translateX(-50%);
+	`;
+	</script>
+	
+	<div class="min-h-screen bg-gray-50 py-8">
+	  <div class="mx-auto max-w-4xl px-4">
+		<h1 class="mb-8 text-center text-4xl font-bold text-gray-900">
+		  {venue?.name ?? 'Loading...'}
+		</h1>
+	
+		{#if venue}
+		  <div 
+			class="relative mx-auto mb-8 flex h-16 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 font-bold text-white shadow-lg"
+			style={getPositionStyle(venue.stage.position)}
+			transition:fade
+		  >
+			STAGE
+		  </div>
+	
+		  <div class="relative h-96 w-full overflow-hidden rounded-3xl bg-white shadow-xl">
+			{#each venue.zones as zone (zone.id)}
+			  <button
+				class="absolute flex items-center justify-center rounded-lg font-medium text-white transition-all duration-200 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2"
+				style={`
+				  ${getPositionStyle(zone.position)}
+				  background-color: ${zone.color};
+				`}
+				on:click={() => (selectedZone = selectedZone?.id === zone.id ? null : zone)}
+			  >
+				<div class="space-y-1 text-center">
+				  <span class="block text-lg">{zone.name}</span>
+				</div>
+			  </button>
+			{/each}
+		  </div>
+	
+		  {#if selectedZone}
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+			  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+			  on:click|self={() => (selectedZone = null)}
+			  transition:fade
 			>
-				{zone.name}
-			</button>
-		{/each}
-	</div>
-
-	<!-- Seat Selection Modal -->
-	{#if selectedZone}
-		<div
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-			on:click|self={() => (selectedZone = null)}
-		>
-			<div class="w-full max-w-xl rounded-lg bg-white p-6 md:p-8">
-				<h3 class="mb-4 text-xl font-bold text-center">{selectedZone.name}</h3>
-
-				<!-- Rows -->
-				<div class="space-y-4">
-					{#each selectedZone.rows as row}
-						<div class="flex flex-wrap items-center justify-center gap-4">
-							<!-- Row Name -->
-							<span class="w-8 text-center font-bold">{row.name}</span>
-
-							<!-- Row Seats -->
-							<div class="flex flex-wrap justify-center gap-2">
-								{#each row.seats as seat}
-									{#if seat === null}
-										<div class="w-8"></div>
-									{:else}
-										<button
-											class="h-8 w-8 rounded-md text-sm text-white"
-											class:bg-green-500={seat.status === 'available'}
-											class:bg-gray-500={seat.status === 'occupied'}
-											class:bg-blue-500={selectedSeats.some((s) => s.seatId === seat.id)}
-											disabled={seat.status === 'occupied'}
-											on:click={() => selectSeat(seat.id, selectedZone.id)}
-										>
-											{seat.id}
-										</button>
-									{/if}
-								{/each}
-							</div>
-						</div>
-					{/each}
+			  <div 
+				class="w-full max-w-xl rounded-xl bg-white p-6 shadow-2xl md:p-8"
+				transition:scale
+			  >
+				<div class="mb-6 text-center">
+				  <h3 class="text-2xl font-bold text-gray-900">{selectedZone.name}</h3>
 				</div>
-
-				<!-- Price -->
-				<div class="mt-4 rounded bg-gray-100 p-4 text-center">
-					<p>Selected: {selectedSeats.length} seats</p>
-					<p class="font-bold">Total: ฿{totalPrice.toLocaleString()}</p>
+	
+				<div class="max-h-[60vh] space-y-4 overflow-y-auto px-4">
+				  {#each selectedZone.rows as row (row.name)}
+					<div class="flex items-center gap-4">
+					  <span class="w-8 text-center font-bold text-gray-700">{row.name}</span>
+					  <div class="flex flex-1 flex-wrap justify-center gap-2">
+						{#each row.seats as seat (seat?.id)}
+						  {#if seat === null}
+							<div class="h-8 w-8"></div>
+						  {:else}
+							{@const status = getSeatStatus(seat, selectedZone.id)}
+							<button
+							  class="h-8 w-8 rounded-md text-sm font-medium text-white transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+							  class:bg-emerald-500={status === 'available'}
+							  class:bg-gray-400={status === 'occupied'}
+							  class:bg-blue-500={status === 'selected'}
+							  class:scale-110={status === 'selected'}
+							  disabled={seat.status === 'occupied'}
+							  on:click={() => selectedZone && selectSeat(seat.id, selectedZone.id)}
+							>
+							  {seat.id}
+							</button>
+						  {/if}
+						{/each}
+					  </div>
+					</div>
+				  {/each}
 				</div>
-
-				<!-- Close Button -->
-				<button
-					class="mt-4 w-full rounded bg-gray-200 p-2 hover:bg-gray-300"
-					on:click={() => (selectedZone = null)}
-				>
-					Close
-				</button>
+	
+				<div class="mt-6 space-y-4">
+				  <div class="rounded-lg bg-gray-50 p-4">
+					<div class="flex justify-between text-gray-600">
+					  <span>Selected seats</span>
+					  <span>{selectedSeatsCount}</span>
+					</div>
+					<div class="mt-2 flex justify-between text-lg font-bold text-gray-900">
+					  <span>Total amount</span>
+					  <span>฿{totalPrice.toLocaleString()}</span>
+					</div>
+				  </div>
+	
+				  <div class="flex gap-4">
+					<button
+					  class="flex-1 rounded-lg bg-gray-200 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-300"
+					  on:click={() => (selectedZone = null)}
+					  type="button"
+					>
+					  Close
+					</button>
+					<button
+					  class="flex-1 rounded-lg bg-blue-600 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+					  disabled={isPaymentDisabled}
+					  type="button"
+					>
+					  Proceed to Payment
+					</button>
+				  </div>
+				</div>
+			  </div>
 			</div>
-		</div>
-	{/if}
-</div>
+		  {/if}
+		{/if}
+	  </div>
+	</div>

@@ -1,7 +1,10 @@
 import { writable } from "svelte/store";
+import type { Venue } from './venueTypes';
 
-export const projectBase4 = writable({
-    name: "Project-Baseed 4",
+type VenueStore = ReturnType<typeof writable<Venue>>;
+
+export const projectBase4: VenueStore = writable<Venue>({
+    name: "Project-Based 4",
     stage: {
         position: {
             x: "30%",
@@ -23,43 +26,7 @@ export const projectBase4 = writable({
                 width: "25%",
                 height: "50%",
             },
-            rows: [
-                {
-                    name: "A",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 1}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "B",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 1}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "C",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 1}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "D",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 1}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "E",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 1}`,
-                        status: "available",
-                    })),
-                },
-            ],
+            rows: generateRows("A", 8, 0),
         },
         {
             id: "zoneB",
@@ -71,43 +38,7 @@ export const projectBase4 = writable({
                 width: "25%",
                 height: "50%",
             },
-            rows: [
-                {
-                    name: "A",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 9}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "B",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 9}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "C",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 9}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "D",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 9}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "E",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 9}`,
-                        status: "available",
-                    })),
-                },
-            ],
+            rows: generateRows("B", 8, 8),
         },
         {
             id: "zoneC",
@@ -119,44 +50,18 @@ export const projectBase4 = writable({
                 width: "25%",
                 height: "50%",
             },
-            rows: [
-                {
-                    name: "A",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 18}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "B",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 18}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "C",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 18}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "D",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 18}`,
-                        status: "available",
-                    })),
-                },
-                {
-                    name: "E",
-                    seats: Array.from({ length: 8 }, (_, i) => ({
-                        id: `${i + 18}`,
-                        status: "available",
-                    })),
-                },
-            ],
+            rows: generateRows("C", 8, 16),
         }
     ],
-    
 });
+
+function generateRows(zoneId: string, seatsPerRow: number, startIndex: number) {
+    const rowNames = ['A', 'B', 'C', 'D', 'E'];
+    return rowNames.map(name => ({
+        name,
+        seats: Array.from({ length: seatsPerRow }, (_, i) => ({
+            id: `${i + startIndex + 1}`,
+            status: 'available' as const,
+        })),
+    }));
+}
