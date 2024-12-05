@@ -16,7 +16,7 @@
 
 <nav class="bg-[#9f1c37] py-4 text-white">
 	<div class="container mx-auto flex items-center justify-between px-6">
-		<a href="/" class="text-xl font-bold">EventPlatform</a>
+		<a href="/" class="text-xl font-bold">IT@EventHub</a>
 		<button
 			class="text-white focus:outline-none md:hidden"
 			aria-label="Toggle Menu"

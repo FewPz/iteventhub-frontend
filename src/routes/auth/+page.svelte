@@ -6,7 +6,6 @@
 
 	const handleGoogleLogin = async () => {
 		try {
-			toast.loading('Redirecting to Google...');
 			window.location.href = `http://localhost:3000/auth/google`;
 		} catch (error) {
 			toast.error('Failed to redirect. Please try again.');

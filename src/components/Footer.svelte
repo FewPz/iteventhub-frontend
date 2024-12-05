@@ -1,8 +1,7 @@
-<footer class="bg-gray-800 py-4 text-center text-white">
-	<p>&copy; 2024 EventPlatform. All Rights Reserved.</p>
-	<ul class="mt-2 flex justify-center space-x-4">
-		<li><a href="/" class="hover:underline">Privacy</a></li>
-		<li><a href="/" class="hover:underline">Terms</a></li>
-		<li><a href="/" class="hover:underline">Contact</a></li>
-	</ul>
+<footer class="border-t bg-gray-900 py-6 text-center text-sm text-white">
+	<p class="flex items-center justify-center gap-4">
+		<span>&copy; 2024 IT@EventHub</span>
+		<span>·</span>
+		<a href="/" class="hover:text-gray-800">Terms</a>
+	</p>
 </footer>

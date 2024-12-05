@@ -6,8 +6,8 @@
 
 	onMount(() => {
 		logout();
-		goto('/');
 		toast.success('Logged out successfully!');
+		goto('/');
 	});
 </script>
 
