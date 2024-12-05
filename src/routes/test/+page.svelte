@@ -121,7 +121,8 @@
 													class:bg-blue-500={status === 'selected'}
 													class:scale-110={status === 'selected'}
 													disabled={seat.status === 'occupied'}
-													on:click={() => selectSeat(seat.id, selectedZone!!.name + selectedZone!!.id)}
+													on:click={() =>
+														selectSeat(seat.id, selectedZone!!.name + selectedZone!!.id)}
 												>
 													{seat.id}
 												</button>

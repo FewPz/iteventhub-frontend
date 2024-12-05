@@ -2,11 +2,11 @@
 	import { isAuthenticated, user, logout } from '$lib/auth';
 	import { goto } from '$app/navigation';
 	import toast from 'svelte-french-toast';
-	let isMenuOpen = false; 
+	let isMenuOpen = false;
 
 	const handleLogout = async () => {
 		try {
-			toast.loading("Redirecting to logout...");
+			toast.loading('Redirecting to logout...');
 			goto('/auth/logout');
 		} catch (error) {
 			toast.error('Failed to logout. Please try again.');
@@ -37,7 +37,7 @@
 				/>
 			</svg>
 		</button>
-		<ul class="hidden space-x-6 md:flex items-center">
+		<ul class="hidden items-center space-x-6 md:flex">
 			<li><a href="/" class="hover:underline">Home</a></li>
 			<li><a href="#features" class="hover:underline">Features</a></li>
 			{#if $isAuthenticated}
@@ -45,9 +45,9 @@
 					<!-- Profile Picture -->
 					<div class="flex items-center space-x-2">
 						<img
-							src="{$user?.avatar}"
+							src={$user?.avatar}
 							alt="User Avatar"
-							class="w-8 h-8 rounded-full border-2 border-white"
+							class="h-8 w-8 rounded-full border-2 border-white"
 						/>
 					</div>
 				</li>
@@ -65,9 +65,9 @@
 				<li>
 					<div class="flex items-center space-x-2">
 						<img
-							src="{$user?.avatar}"
+							src={$user?.avatar}
 							alt="User Avatar"
-							class="w-8 h-8 rounded-full border-2 border-white"
+							class="h-8 w-8 rounded-full border-2 border-white"
 						/>
 					</div>
 				</li>

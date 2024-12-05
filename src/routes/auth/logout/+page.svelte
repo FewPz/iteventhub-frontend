@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-    import { logout } from '$lib/auth';
+	import { logout } from '$lib/auth';
 	import { goto } from '$app/navigation';
 	import toast from 'svelte-french-toast';
 
 	onMount(() => {
-        logout();
-        goto('/');
-        toast.success('Logged out successfully!');
+		logout();
+		goto('/');
+		toast.success('Logged out successfully!');
 	});
 </script>
 
