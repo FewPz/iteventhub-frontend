@@ -60,7 +60,7 @@ function generateRows(zoneId: string, seatsPerRow: number, startIndex: number) {
     return rowNames.map(name => ({
         name,
         seats: Array.from({ length: seatsPerRow }, (_, i) => ({
-            id: `${i + startIndex + 1}`,
+            id: `${name + (i + startIndex + 1)}`,
             status: 'available' as const,
         })),
     }));

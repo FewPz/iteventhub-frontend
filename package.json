@@ -29,6 +29,9 @@
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.6",
 		"@tailwindcss/typography": "^0.5.15",
-		"aos": "^2.3.4"
+		"aos": "^2.3.4",
+		"lucide-react": "^0.465.0",
+		"lucide-svelte": "^0.465.0",
+		"svelte-french-toast": "^1.2.0"
 	}
 }

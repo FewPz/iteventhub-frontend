@@ -1,13 +1,22 @@
 <script>
-	let isMenuOpen = false; // State to manage mobile menu toggle
+	import { isAuthenticated, user, logout } from '$lib/auth';
+	import { goto } from '$app/navigation';
+	import toast from 'svelte-french-toast';
+	let isMenuOpen = false; 
+
+	const handleLogout = async () => {
+		try {
+			toast.loading("Redirecting to logout...");
+			goto('/auth/logout');
+		} catch (error) {
+			toast.error('Failed to logout. Please try again.');
+		}
+	};
 </script>
 
 <nav class="bg-[#9f1c37] py-4 text-white">
 	<div class="container mx-auto flex items-center justify-between px-6">
-		<!-- Logo -->
 		<a href="/" class="text-xl font-bold">EventPlatform</a>
-
-		<!-- Hamburger Button for Mobile -->
 		<button
 			class="text-white focus:outline-none md:hidden"
 			aria-label="Toggle Menu"
@@ -28,21 +37,44 @@
 				/>
 			</svg>
 		</button>
-
-		<!-- Desktop Menu -->
-		<ul class="hidden space-x-6 md:flex">
+		<ul class="hidden space-x-6 md:flex items-center">
 			<li><a href="/" class="hover:underline">Home</a></li>
 			<li><a href="#features" class="hover:underline">Features</a></li>
-			<li><a href="#register" class="hover:underline">Register</a></li>
+			{#if $isAuthenticated}
+				<li>
+					<!-- Profile Picture -->
+					<div class="flex items-center space-x-2">
+						<img
+							src="{$user?.avatar}"
+							alt="User Avatar"
+							class="w-8 h-8 rounded-full border-2 border-white"
+						/>
+					</div>
+				</li>
+				<li><button on:click={handleLogout} class="hover:underline">Logout</button></li>
+			{:else}
+				<li><a href="/auth" class="hover:underline">Login</a></li>
+			{/if}
 		</ul>
 	</div>
-
-	<!-- Mobile Menu -->
 	<div class={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} bg-[#9f1c37] text-white`}>
 		<ul class="flex flex-col space-y-4 px-6 py-4">
 			<li><a href="/" class="hover:underline">Home</a></li>
 			<li><a href="#features" class="hover:underline">Features</a></li>
-			<li><a href="#register" class="hover:underline">Register</a></li>
+			{#if $isAuthenticated}
+				<li>
+					<div class="flex items-center space-x-2">
+						<img
+							src="{$user?.avatar}"
+							alt="User Avatar"
+							class="w-8 h-8 rounded-full border-2 border-white"
+						/>
+					</div>
+				</li>
+				<li><button on:click={handleLogout} class="hover:underline">Logout</button></li>
+			{:else}
+				<li><a href="/auth" class="hover:underline">Login</a></li>
+			{/if}
 		</ul>
 	</div>
 </nav>
